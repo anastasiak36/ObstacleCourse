@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href = "style.css" rel = "stylesheet" type = "text/css">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="600" height="500"></canvas>
+    <h1>hi</h1>
+    <!-- <script type = "text/javascript" src="course.js"></script> -->
+    <script>
+        var canvas = document.getElementById("myCanvas");
+        var ctx = canvas.getContext("2d");
+
+        var player1 = new Image();
+        player1.src = "images/blue.png";
+
+        function drawPlayer1() {
+            ctx.beginPath();
+            ctx.drawImage(player1, 10, canvas.height - 10);
+            ctx.closePath();
+        }
+
+            drawPlayer1();
+            ctx.beginPath();
+            ctx.rect(20, 40, 50, 50);
+            ctx.fillStyle = "green";
+            ctx.fill();
+            ctx.closePath();
+    </script>
+</body>
+</html>
