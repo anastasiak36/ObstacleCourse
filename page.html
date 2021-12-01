@@ -4,32 +4,201 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href = "style.css" rel = "stylesheet" type = "text/css">
     <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            background: #eee; 
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
 </head>
 <body>
-    <canvas id="myCanvas" width="600" height="500"></canvas>
-    <h1>hi</h1>
-    <!-- <script type = "text/javascript" src="course.js"></script> -->
+    <canvas id="myCanvas" width="1200" height="600"></canvas>
+
     <script>
         var canvas = document.getElementById("myCanvas");
         var ctx = canvas.getContext("2d");
 
-        var player1 = new Image();
-        player1.src = "images/blue.png";
+        var startTime = new Date();
+        var elapsed;
 
-        function drawPlayer1() {
-            ctx.beginPath();
-            ctx.drawImage(player1, 10, canvas.height - 10);
-            ctx.closePath();
+        var x = 0;
+        var y = canvas.height - 25;
+
+        var dx = 3;
+        var dy = 3;
+
+        var ballRadius = 10;
+
+        var rightPressed = false;
+        var leftPressed = false;
+        var upPressed = false;
+        var downPressed = false;
+
+        // var brickRowCount = 3;
+        // var brickColumnCount = 5;
+        var brickWidth = 20;
+        var brickHeight = 20;
+        var brickPadding = 10;
+        // var brickOffsetTop = 30;
+        // var brickOffsetLeft = 30;
+
+        //var time = 0;
+
+        var lives = 3;
+
+        var bricks = [];
+        for (var c = 0; c<25; c++) {
+            bricks[c] = { x: 0, y: 0, status: 1 };
+        }
+        for (var i = 0; i < 25; i++) {
+            var brickX = Math.floor(Math.random() * (canvas.width - 150)) + 75;
+            var brickY = Math.floor(Math.random() * (canvas.height - 60) + 30);
+            for (var j = 0; j < i; j++) {
+                while (brickX >= bricks[j].x && brickX <= bricks[j].x + 40) {
+                    brickX = Math.floor(Math.random() * (canvas.width - 150)) + 75;
+                }
+                while (brickY >= bricks[j].y && brickY <= bricks[j].y + 40) {
+                    brickY = Math.floor(Math.random() * (canvas.height - 60) + 30);
+                }
+            }
+            bricks[i].x = brickX;
+            bricks[i].y = brickY;
+        }
+       
+        document.addEventListener("keydown", keyDownHandler, false);
+        document.addEventListener("keyup", keyUpHandler, false);
+        //document.addEventListener("mousemove", mouseMoveHandler, false);
+
+        function keyDownHandler(e) {
+            if (e.key == "Right" || e.key == "ArrowRight") {
+                rightPressed = true;
+            }
+            else if(e.key == "Left" || e.key == "ArrowLeft"){
+                leftPressed = true;
+            }
+            else if (e.key == "Up" || e.key == "ArrowUp") {
+                upPressed = true;
+            }
+            else if (e.key == "Down" || e.key == "ArrowDown") {
+                downPressed = true;
+            }
+        } 
+        function keyUpHandler(e) {
+            if(e.key == "Right" || e.key == "ArrowRight") {
+                rightPressed = false;
+            }
+            else if(e.key == "Left" || e.key == "ArrowLeft") {
+                leftPressed = false;
+            }
+            else if (e.key == "Up" || e.key == "ArrowUp") {
+                upPressed = false;
+            }
+            else if (e.key == "Down" || e.key == "ArrowDown") {
+                downPressed = false;
+            }
+        }
+        function collisionDetection() {
+            for (var i = 0; i < 25; i++) {
+                var b = bricks[i];
+                var playerLeft = x;
+                var playerRight = x + 25;
+                var playerTop = y ;
+                var playerBottom = y + 25;
+                var bLeft = b.x;
+                var bRight = b.x + 20;
+                var bTop = b.y;
+                var bBottom = b.y + 20;
+                    if ( !(playerLeft > bRight || bLeft > playerRight || playerTop > bBottom || bTop > playerBottom)) {
+                        b.status = 0;
+                        lives--;
+                        if (lives == 0) {
+                            alert("GAME OVER :(");
+                            document.location.reload();
+                        }
+                        x = 0;
+                        y = canvas.height - 25;
+                        
+                    }
+            }
+        }
+        function drawTime() {
+            elapsed = parseInt((new Date() - startTime) / 1000);
+            ctx.font = "16px Arial";
+            ctx.fillStyle = "#FF99AA";
+            ctx.fillText("Time: " + elapsed, 8, 20);
+        }
+        function drawLives() {
+            ctx.font = "16px Arial";
+            ctx.fillStyle = "#FF99AA";
+            ctx.fillText("Lives: " + lives, canvas.width - 65, 20);
         }
 
-            drawPlayer1();
+        function drawPlayer() {
             ctx.beginPath();
-            ctx.rect(20, 40, 50, 50);
-            ctx.fillStyle = "green";
+            ctx.rect(x, y, 25, 25);
+            ctx.fillStyle = "#8BD9C2";
             ctx.fill();
             ctx.closePath();
+        }
+        function drawBricks() {
+            for (var i = 0; i < 25; i++) {
+                ctx.beginPath();
+                ctx.rect(bricks[i].x, bricks[i].y, brickWidth, brickHeight);
+                ctx.fillStyle = "#AE75D9";
+                ctx.fill();
+                ctx.closePath();
+            }
+            
+        }
+        function drawDestination() {
+            //do stuff
+        }
+        
+        function draw() {
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            drawBricks();
+            drawPlayer();
+            drawTime();
+            drawLives();
+          
+            if (rightPressed) {
+                x += dx;
+                if (x + 25 > canvas.width) {
+                    x = canvas.width - 25;
+                }
+            }
+            else if (leftPressed) {
+                x -= dx;
+                if (x < 0) {
+                    x = 0;
+                }
+            }
+            else if (upPressed) {
+                y -= dy;
+                if (y < 0) {
+                    y = 0;
+                }
+            }
+            else if (downPressed) {
+                y += dy;
+                if (y + 25 > canvas.height) {
+                    y = canvas.height - 25;
+                }
+            }
+            collisionDetection();
+            
+            requestAnimationFrame(draw);
+            
+        }
+        draw();
+        
+
     </script>
 </body>
 </html>
