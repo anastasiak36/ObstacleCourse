@@ -4,17 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href= "style.css" rel = "stylesheet" type = "text/css">
     <title>Document</title>
     <style>
-        * {
-            padding: 0;
-            margin: 0;
-        }
-        canvas {
-            background: #eee; 
-            display: block;
-            margin: 0 auto;
-        }
+        
     </style>
 </head>
 <body>
@@ -30,8 +23,8 @@
         var x = 0;
         var y = canvas.height - 25;
 
-        var dx = 3;
-        var dy = 3;
+        var dx = 4;
+        var dy = 4;
 
         var ballRadius = 10;
 
@@ -40,23 +33,18 @@
         var upPressed = false;
         var downPressed = false;
 
-        // var brickRowCount = 3;
-        // var brickColumnCount = 5;
+        
         var brickWidth = 20;
         var brickHeight = 20;
         var brickPadding = 10;
-        // var brickOffsetTop = 30;
-        // var brickOffsetLeft = 30;
-
-        //var time = 0;
 
         var lives = 3;
 
         var bricks = [];
-        for (var c = 0; c<25; c++) {
+        for (var c = 0; c<100; c++) {
             bricks[c] = { x: 0, y: 0, status: 1 };
         }
-        for (var i = 0; i < 25; i++) {
+        for (var i = 0; i < 100; i++) {
             var brickX = Math.floor(Math.random() * (canvas.width - 150)) + 75;
             var brickY = Math.floor(Math.random() * (canvas.height - 60) + 30);
             for (var j = 0; j < i; j++) {
@@ -104,7 +92,7 @@
             }
         }
         function collisionDetection() {
-            for (var i = 0; i < 25; i++) {
+            for (var i = 0; i < 100; i++) {
                 var b = bricks[i];
                 var playerLeft = x;
                 var playerRight = x + 25;
@@ -121,33 +109,40 @@
                             alert("GAME OVER :(");
                             document.location.reload();
                         }
+                        
                         x = 0;
                         y = canvas.height - 25;
-                        
                     }
+                    if (x >= canvas.width - 45 &&  y >= 20 && y <= 70) {
+                        alert("Congratulations!! You win! \nElapsed time: " + elapsed + "\nPlay again?");
+                        document.location.reload();
+                        x = 0;
+                        y = canvas.height - 25;
+                    }
+                    
             }
         }
         function drawTime() {
             elapsed = parseInt((new Date() - startTime) / 1000);
-            ctx.font = "16px Arial";
-            ctx.fillStyle = "#FF99AA";
+            ctx.font = "bold 20px Arial";
+            ctx.fillStyle = "#ff8297";
             ctx.fillText("Time: " + elapsed, 8, 20);
         }
         function drawLives() {
-            ctx.font = "16px Arial";
-            ctx.fillStyle = "#FF99AA";
-            ctx.fillText("Lives: " + lives, canvas.width - 65, 20);
+            ctx.font = "bold 20px Arial";
+            ctx.fillStyle = "#ff8297";
+            ctx.fillText("Lives: " + lives, canvas.width - 80, 20);
         }
 
         function drawPlayer() {
             ctx.beginPath();
             ctx.rect(x, y, 25, 25);
-            ctx.fillStyle = "#8BD9C2";
+            ctx.fillStyle = "#50ebe2";
             ctx.fill();
             ctx.closePath();
         }
         function drawBricks() {
-            for (var i = 0; i < 25; i++) {
+            for (var i = 0; i < 100; i++) {
                 ctx.beginPath();
                 ctx.rect(bricks[i].x, bricks[i].y, brickWidth, brickHeight);
                 ctx.fillStyle = "#AE75D9";
@@ -157,7 +152,11 @@
             
         }
         function drawDestination() {
-            //do stuff
+            ctx.beginPath();
+            ctx.arc(canvas.width - 25, 50, 20, 0, Math.PI * 2);
+            ctx.fillStyle = "#f9f2ff";
+            ctx.fill();
+            ctx.closePath();
         }
         
         function draw() {
@@ -166,6 +165,7 @@
             drawPlayer();
             drawTime();
             drawLives();
+            drawDestination();
           
             if (rightPressed) {
                 x += dx;

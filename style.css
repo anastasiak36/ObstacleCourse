@@ -1,3 +1,12 @@
-#myCanvas {
-    background-color: #e1bdff;
+/* #myCanvas {
+    
+} */
+* {
+    padding: 0;
+    margin: 0;
+}
+canvas {
+    background-color: #ead1ff;
+    display: block;
+    margin: 0 auto;
 }
